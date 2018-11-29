@@ -1,0 +1,18 @@
+{
+  "name": "themisto",
+  "version": "1.0.0",
+  "description": "Just a crawler with nodejs",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "josealejandror28@gmail.com",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^0.18.0",
+    "dotenv": "^6.1.0",
+    "koa": "^2.6.2",
+    "koa-bodyparser": "^4.2.1",
+    "puppeteer": "^1.10.0"
+  }
+}
