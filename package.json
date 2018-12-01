@@ -4,7 +4,7 @@
   "description": "Just a crawler with nodejs",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js",
+    "start": "node --experimental-modules index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "josealejandror28@gmail.com",
@@ -12,6 +12,7 @@
   "dependencies": {
     "axios": "^0.18.0",
     "dotenv": "^6.1.0",
+    "esm": "^3.0.84",
     "koa": "^2.6.2",
     "koa-bodyparser": "^4.2.1",
     "puppeteer": "^1.10.0"

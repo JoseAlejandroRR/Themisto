@@ -25,14 +25,14 @@
 class CrawlerFalabella {
 
 	constructor(ctx, req) {
-		if(ctx==null) {
+		if (ctx == null) {
 			throw new Error('Ctx object is required');
 		} else {
 			this.ctx = ctx;
 		}
 
-		if(req==null) {
-			throw new  Error('request is empty');
+		if (req == null) {
+			throw new Error('request is empty');
 		} else {
 			this.req = req;
 		}
@@ -50,55 +50,55 @@ class CrawlerFalabella {
 		await this.page.screenshot({path:'sample.png'});
 
 		await this.client.close();*/
-		const viewPort = {width:1280, height:960};
+		const viewPort = { width: 1280, height: 960 };
 		const page = await this.client.newPage();
-		await page.goto(this.entry_point+ encodeURI(this.req.query));
+		await page.goto(this.entry_point + encodeURI(this.req.query));
 		await page.setViewport(viewPort);
 
 		const teams = await page.evaluate(() => {
-				const data = [];
-				for (const tr of document.querySelectorAll('.pod-head__image')) {
-					data.push({
-						url: tr.getAttribute('href'),
-					})
-				}
-		      return data
-		    });
+			const data = [];
+			for (const tr of document.querySelectorAll('.pod-head__image')) {
+				data.push({
+					url: tr.getAttribute('href'),
+				})
+			}
+			return data
+		});
 		console.log('RESULTS');
 		let resultsData = [];
-		for(let i in teams) {
+		for (let i in teams) {
 			const item = teams[i];
 			//console.log('Navigate in '+this.domainUrl+item.url);
 			console.log(item);
-			await page.goto(this.domainUrl+item.url);
+			await page.goto(this.domainUrl + item.url);
 			const pageData = await page.evaluate(() => {
-				resultsItem = [];
+			  resultsItem = [];
 				let imagesUrl = [];
-				document.querySelectorAll('.fb-pp-gallery-list li img').forEach(img => imagesUrl.push(img.getAttribute('src')) );
+				document.querySelectorAll('.fb-pp-gallery-list li img').forEach(img => imagesUrl.push(img.getAttribute('src')));
 
 				let productsRelated = [];
-				document.querySelectorAll('.fb-pod-group__item a').forEach(a => productsRelated.push(a.getAttribute('href')) );
+				document.querySelectorAll('.fb-pod-group__item a').forEach(a => productsRelated.push(a.getAttribute('href')));
 
-				const cat_uid = document.querySelectorAll('.fb-masthead__breadcrumb__link').length ? document.querySelectorAll('.fb-masthead__breadcrumb__link')[document.querySelectorAll('.fb-masthead__breadcrumb__link').length-1].innerText.replace('/','').trim().replace(new RegExp(' ', 'g'), '-') : null;
+				const cat_uid = document.querySelectorAll('.fb-masthead__breadcrumb__link').length ? document.querySelectorAll('.fb-masthead__breadcrumb__link')[document.querySelectorAll('.fb-masthead__breadcrumb__link').length - 1].innerText.replace('/', '').trim().replace(new RegExp(' ', 'g'), '-') : null;
 				console.log(cat_uid)
 				const dt = {
 					title: document.querySelector('.fb-product-cta__title') ? document.querySelector('.fb-product-cta__title').innerText : null,
 					brand: document.querySelector('.fb-product-cta__brand') ? document.querySelector('.fb-product-cta__brand').innerText : null,
-					sku: document.querySelector('.fb-product-sets__product-code') ? document.querySelector('.fb-product-sets__product-code').innerText.trim().replace('Código del producto: ','') : null,
+					sku: document.querySelector('.fb-product-sets__product-code') ? document.querySelector('.fb-product-sets__product-code').innerText.trim().replace('Código del producto: ', '') : null,
 					price: document.querySelectorAll('.fb-price')[0] ? document.querySelectorAll('.fb-price')[0].innerText.trim().split(' ')[1] : null,
 					//price_promotion: document.querySelectorAll('.fb-price')[0] ? document.querySelectorAll('.fb-price')[0].innerText.trim().split(' ')[1] : null,
 					category: cat_uid,
 					description: document.querySelector('.fb-product-information') ? document.querySelector('.fb-product-information').innerText : null,
-					images:imagesUrl,
+					images: imagesUrl,
 					products_related: productsRelated,
-					category_query:cat_uid
+					category_query: cat_uid
 				};
 				if (document.querySelectorAll('.fb-price')[1]) {
 					dt.price_promotion = dt.price;
-					dt.price =  document.querySelectorAll('.fb-price')[1].innerText.trim().split(' ')[1];
+					dt.price = document.querySelectorAll('.fb-price')[1].innerText.trim().split(' ')[1];
 				}
 				resultsItem.push(dt);
-			//	console.log(dt);
+				//	console.log(dt);
 				return resultsItem;
 			});
 			resultsData.push(pageData[0]);
